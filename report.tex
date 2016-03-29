@@ -1,0 +1,86 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[pdftex]{hyperref}
+\usepackage{listings}
+
+% Lengths and indenting
+\setlength{\textwidth}{16.5cm}
+\setlength{\marginparwidth}{1.5cm}
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.15cm}
+\setlength{\textheight}{22cm}
+\setlength{\oddsidemargin}{0cm}
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{0cm}
+\setlength{\headheight}{0cm}
+\setlength{\headsep}{0cm}
+
+\lstset{
+  basicstyle=\fontsize{11}{13}\selectfont\ttfamily
+}
+
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{Introduction to Learning and Intelligent Systems - Spring 2015}
+\author{Martin Ivanov (ivanovma@student.ethz.ch)\\ Can Tuerk (can.tuerk@juniors.ethz.ch)\\ Jens Hauser(jhauser@student.ethz.ch)\\}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Project 1 : Regression}
+
+\subsection*{Problem description}
+We received datafiles on measurements of passengers using services of the rail auhority. The data for this regression task is, beside the response variable as passenger number, structured into seven specific explanatory variables which includes a timestamp and six parameters about the weather.
+
+A first intuitiv approach would be to concentrate only on the variables weekday and hour given in the timestamp, because these variables can be seen as the most important explanations for travelling by train due to i.e. commuting to work.
+
+So we first started a research on pairs of the response and every single variable given in the dataset and recognized that there exists no clear linear relationship on each of those pairs and even the predicitions from a simple multiple linear regression model are far beyond the easy baseline. These results and inspections guided us to have a closer look on more complex models with different features and feature-transformations to be able to describe the relationship of the given data set.
+
+\subsection*{1st. Solution: Ridge Regression}
+After having done our first research on the data to get an better understanding of the problem we began to set up a ridge regression cross validation model and tried to improve our results in a random trial-and-error style in selecting features and feature-transformations. This approach left us with a best performance of about 0.6 due to the given loss function.
+
+To do things better and get closer to the hard baseline we decided to set up a greedy forward selection on features and feature-transformations. So we set up a really huge matrix of all possible features and feature-transformations. As this approach worked technically quite good, the performance due to the given loss function seemed to merge to a value within the interval [0.567,0.568] as stated in the following table. Each line represents the regression loss for adding the new column 'Column-name' to our design-matrix.
+
+\begin{table}[!h]
+
+\caption{greedy forward selection results}
+\begin{tabular}{lll}
+\toprule
+VarNumber & Loss & Column-name \\
+\midrule
+1&1.08883149&hour+A\\
+2&0.89185466&hour^5\\
+3&0.83401695&4h\\
+4&0.79707187&3h\\
+...\\
+20&0.58475916&Dec\\
+21&0.58081406&A^3\\
+...\\
+40&0.56849751&E\\
+41&0.56826396&A*C*F\\
+42&0.56813648&D*E\\
+...\\
+49&0.56754459&Thu\\
+50&0.56729329&Aug\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\end{table}
+
+
+
+\subsection*{2nd Solution: Support Vector Regression}
+After having beaten the easy baseline with the described ridge regression approach but got stuck at a loss somewhere between 0.56 and 0.57 we tried to find a method to get close to or beat the hard baseline and did find such method with the support vector regression. Due to the fact that a kernel transforms the data into high-dimensional space we didn't need the huge matrix from the ridge regression approach any more. The best performance we got from this approach was a loss of about 0.39 on the validation set. The design-matrix for our best performance measure was made of the following features:
+\begin{lstlisting}[language=R,breaklines=True,prebreak={\carriagereturn}]
+['A','C','E','B1','B2','B3','B4','2013','2014','2015','Jan',
+'Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec',
+'Mon','Tue','Wed','Thu','Fri','Sat','Sun','hour','hour+A',
+'hour+E','hour+F']
+\end{lstlisting}
+
+\end{document}
